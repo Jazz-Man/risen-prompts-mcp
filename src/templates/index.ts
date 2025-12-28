@@ -1,0 +1,1027 @@
+import { Schema } from "effect";
+import code_review_checklist from "./files/code_review_checklist.md" with {
+	type: "text",
+};
+import competitor_analysis from "./files/competitor_analysis.md" with {
+	type: "text",
+};
+import technical_blog_post from "./files/technical_blog_post.md" with {
+	type: "text",
+};
+import user_research_synthesis from "./files/user_research_synthesis.md" with {
+	type: "text",
+};
+
+export const PromptTemplate = Schema.Struct({
+	name: Schema.String,
+	domain: Schema.String,
+	template: Schema.String,
+	variables: Schema.Array(Schema.String),
+	example: Schema.String,
+	best_practices: Schema.optional(Schema.Array(Schema.String)),
+	examples: Schema.optional(Schema.Array(Schema.String)),
+});
+
+type PromptTemplateType = Schema.Schema.Type<typeof PromptTemplate>;
+
+const templateMap = new Map<string, PromptTemplateType>();
+
+templateMap.set("competitor_analysis", {
+	name: "Competitive Analysis Framework",
+	domain: "business_analysis",
+	template: competitor_analysis,
+	variables: [
+		"company_name",
+		"industry",
+		"market_size",
+		"growth_rate",
+		"market_trends",
+		"segments",
+		"competitor_1",
+		"competitor_1_description",
+		"competitor_2",
+		"competitor_2_description",
+		"competitor_3",
+		"competitor_3_description",
+		"company_share",
+		"comp1_share",
+		"comp2_share",
+		"comp3_share",
+		"company_pricing",
+		"comp1_pricing",
+		"comp2_pricing",
+		"comp3_pricing",
+		"company_features",
+		"comp1_features",
+		"comp2_features",
+		"comp3_features",
+		"company_audience",
+		"comp1_audience",
+		"comp2_audience",
+		"comp3_audience",
+		"company_strengths",
+		"comp1_strengths",
+		"comp2_strengths",
+		"comp3_strengths",
+		"company_weaknesses",
+		"comp1_weaknesses",
+		"comp2_weaknesses",
+		"comp3_weaknesses",
+		"detailed_strengths",
+		"detailed_weaknesses",
+		"opportunities",
+		"threats",
+		"positioning_analysis",
+		"recommendation_1",
+		"recommendation_2",
+		"recommendation_3",
+		"short_term_actions",
+		"medium_term_actions",
+		"long_term_actions",
+	],
+	examples: [
+		"SaaS company analysis",
+		"E-commerce platform comparison",
+		"Mobile app competitive landscape",
+	],
+	best_practices: [
+		"Use recent data",
+		"Include visual comparisons",
+		"Focus on actionable insights",
+	],
+	example: "Competitive Analysis: SaaS CRM Market...",
+});
+
+templateMap.set("user_research_synthesis", {
+	name: "User Research Synthesis",
+	domain: "product_management",
+	template: user_research_synthesis,
+	variables: [
+		"research_topic",
+		"research_period",
+		"research_methods",
+		"sample_size",
+		"demographics",
+		"research_question_1",
+		"research_question_2",
+		"research_question_3",
+		"methodology_description",
+		"finding_1_title",
+		"finding_1_observation",
+		"finding_1_data",
+		"finding_1_quote",
+		"finding_1_implication",
+		"finding_2_title",
+		"finding_2_observation",
+		"finding_2_data",
+		"finding_2_quote",
+		"finding_2_implication",
+		"finding_3_title",
+		"finding_3_observation",
+		"finding_3_data",
+		"finding_3_quote",
+		"finding_3_implication",
+		"persona_1_changes",
+		"persona_2_changes",
+		"pain_point_1",
+		"pain_point_1_details",
+		"pain_point_2",
+		"pain_point_2_details",
+		"pain_point_3",
+		"pain_point_3_details",
+		"quick_wins",
+		"medium_term_opportunities",
+		"long_term_opportunities",
+		"recommendation_1",
+		"rec_1_rationale",
+		"recommendation_2",
+		"rec_2_rationale",
+		"recommendation_3",
+		"rec_3_rationale",
+		"next_step_1",
+		"next_step_2",
+		"next_step_3",
+		"data_location",
+		"recordings_location",
+		"survey_location",
+	],
+	examples: [
+		"Usability study synthesis",
+		"Customer interview insights",
+		"Survey analysis report",
+	],
+	best_practices: [
+		"Include direct quotes",
+		"Link findings to business impact",
+		"Prioritize actionability",
+	],
+	example: "User Research Synthesis: Mobile App Navigation Study...",
+});
+
+templateMap.set("technical_blog_post", {
+	name: "Technical Blog Post Structure",
+	domain: "content_creation",
+	template: technical_blog_post,
+	variables: [
+		"title",
+		"meta_description",
+		"keywords",
+		"reading_time",
+		"hook_statement",
+		"problem_context",
+		"learning_outcome_1",
+		"learning_outcome_2",
+		"learning_outcome_3",
+		"prerequisite_1",
+		"prerequisite_2",
+		"problem_description",
+		"real_world_example",
+		"solution_overview",
+		"step_1_title",
+		"step_1_description",
+		"code_language",
+		"step_1_code",
+		"step_1_explanation",
+		"step_2_title",
+		"step_2_description",
+		"step_2_code",
+		"step_2_explanation",
+		"step_3_title",
+		"step_3_description",
+		"step_3_code",
+		"step_3_explanation",
+		"best_practice_1",
+		"bp_1_explanation",
+		"best_practice_2",
+		"bp_2_explanation",
+		"best_practice_3",
+		"bp_3_explanation",
+		"pitfall_1",
+		"pitfall_1_solution",
+		"pitfall_2",
+		"pitfall_2_solution",
+		"performance_analysis",
+		"approach_1",
+		"time_1",
+		"memory_1",
+		"complexity_1",
+		"approach_2",
+		"time_2",
+		"memory_2",
+		"complexity_2",
+		"summary",
+		"takeaway_1",
+		"takeaway_2",
+		"takeaway_3",
+		"next_steps",
+		"resource_1_title",
+		"resource_1_link",
+		"resource_2_title",
+		"resource_2_link",
+		"resource_3_title",
+		"resource_3_link",
+		"author_bio",
+	],
+	examples: [
+		"React hooks tutorial",
+		"Kubernetes deployment guide",
+		"Python optimization techniques",
+	],
+	best_practices: [
+		"Use code examples",
+		"Include visuals",
+		"SEO optimization",
+		"Mobile-friendly formatting",
+	],
+	example: "Technical Blog Post: Advanced React Patterns...",
+});
+
+templateMap.set("code_review_checklist", {
+	name: "Comprehensive Code Review Checklist",
+	domain: "development",
+	template: code_review_checklist,
+	variables: [
+		"pr_title",
+		"pr_number",
+		"author",
+		"reviewer",
+		"date",
+		"files_changed",
+		"lines_added",
+		"lines_removed",
+		"pr_description",
+		"patterns_check",
+		"solid_check",
+		"abstractions_check",
+		"overengineering_check",
+		"readability_check",
+		"dry_check",
+		"naming_check",
+		"complexity_check",
+		"unit_tests_check",
+		"integration_tests_check",
+		"edge_cases_check",
+		"coverage_check",
+		"input_validation_check",
+		"secrets_check",
+		"sql_injection_check",
+		"xss_check",
+		"auth_check",
+		"n_plus_one_check",
+		"algorithm_check",
+		"caching_check",
+		"indexes_check",
+		"comments_check",
+		"readme_check",
+		"api_docs_check",
+		"changelog_check",
+		"positive_feedback",
+		"critical_issue_1",
+		"critical_location_1",
+		"critical_description_1",
+		"critical_suggestion_1",
+		"major_issue_1",
+		"major_location_1",
+		"major_description_1",
+		"major_suggestion_1",
+		"minor_issue_1",
+		"minor_location_1",
+		"minor_description_1",
+		"minor_suggestion_1",
+		"improvement_suggestions",
+		"language",
+		"current_code",
+		"improved_code",
+		"improvement_rationale",
+		"approval_status",
+		"confidence_level",
+		"impact_assessment",
+		"action_item_1",
+		"action_item_2",
+		"action_item_3",
+		"additional_notes",
+	],
+	examples: ["Feature PR review", "Bug fix review", "Refactoring review"],
+	best_practices: [
+		"Be constructive",
+		"Provide examples",
+		"Focus on learning",
+		"Acknowledge good work",
+	],
+	example: "Code Review: Authentication System Enhancement...",
+});
+
+templateMap.set("stakeholder_update", {
+	name: "Stakeholder Update Email",
+	domain: "communication",
+	template: `Subject: {project_name} - {update_type} Update - {date}
+
+Dear {stakeholder_group},
+
+I hope this email finds you well. I'm writing to provide you with an update on {project_name}.
+
+## Executive Summary
+
+{executive_summary}
+
+**Overall Status**: {overall_status_emoji} {overall_status}
+**Timeline**: {timeline_status}
+**Budget**: {budget_status}
+**Risk Level**: {risk_level}
+
+## Key Accomplishments ({reporting_period})
+
+✅ {accomplishment_1}
+- Impact: {accomplishment_1_impact}
+
+✅ {accomplishment_2}
+- Impact: {accomplishment_2_impact}
+
+✅ {accomplishment_3}
+- Impact: {accomplishment_3_impact}
+
+## Current Focus
+
+{current_focus_description}
+
+### In Progress
+- {in_progress_1} ({progress_1}% complete)
+- {in_progress_2} ({progress_2}% complete)
+- {in_progress_3} ({progress_3}% complete)
+
+## Upcoming Milestones
+
+| Milestone | Target Date | Status |
+|-----------|------------|---------|
+| {milestone_1} | {date_1} | {status_1} |
+| {milestone_2} | {date_2} | {status_2} |
+| {milestone_3} | {date_3} | {status_3} |
+
+## Challenges & Mitigation
+
+### Challenge 1: {challenge_1}
+- **Impact**: {challenge_1_impact}
+- **Mitigation**: {challenge_1_mitigation}
+- **Status**: {challenge_1_status}
+
+### Challenge 2: {challenge_2}
+- **Impact**: {challenge_2_impact}
+- **Mitigation**: {challenge_2_mitigation}
+- **Status**: {challenge_2_status}
+
+## Decisions Needed
+
+{decision_context}
+
+1. **{decision_1}**
+- Options: {decision_1_options}
+- Recommendation: {decision_1_recommendation}
+- Needed by: {decision_1_deadline}
+
+## Metrics & KPIs
+
+- {metric_1}: {metric_1_value} ({metric_1_trend} from last period)
+- {metric_2}: {metric_2_value} ({metric_2_trend} from last period)
+- {metric_3}: {metric_3_value} ({metric_3_trend} from last period)
+
+## Next Steps
+
+1. {next_step_1}
+2. {next_step_2}
+3. {next_step_3}
+
+## Questions or Concerns?
+
+Please don't hesitate to reach out if you have any questions or would like to discuss any aspect of the project in more detail.
+
+{closing_note}
+
+Best regards,
+{sender_name}
+{sender_title}
+{contact_information}
+
+---
+📎 Attachments: {attachments_list}
+📊 Detailed Report: {detailed_report_link}`,
+	variables: [
+		"project_name",
+		"update_type",
+		"date",
+		"stakeholder_group",
+		"executive_summary",
+		"overall_status_emoji",
+		"overall_status",
+		"timeline_status",
+		"budget_status",
+		"risk_level",
+		"reporting_period",
+		"accomplishment_1",
+		"accomplishment_1_impact",
+		"accomplishment_2",
+		"accomplishment_2_impact",
+		"accomplishment_3",
+		"accomplishment_3_impact",
+		"current_focus_description",
+		"in_progress_1",
+		"progress_1",
+		"in_progress_2",
+		"progress_2",
+		"in_progress_3",
+		"progress_3",
+		"milestone_1",
+		"date_1",
+		"status_1",
+		"milestone_2",
+		"date_2",
+		"status_2",
+		"milestone_3",
+		"date_3",
+		"status_3",
+		"challenge_1",
+		"challenge_1_impact",
+		"challenge_1_mitigation",
+		"challenge_1_status",
+		"challenge_2",
+		"challenge_2_impact",
+		"challenge_2_mitigation",
+		"challenge_2_status",
+		"decision_context",
+		"decision_1",
+		"decision_1_options",
+		"decision_1_recommendation",
+		"decision_1_deadline",
+		"metric_1",
+		"metric_1_value",
+		"metric_1_trend",
+		"metric_2",
+		"metric_2_value",
+		"metric_2_trend",
+		"metric_3",
+		"metric_3_value",
+		"metric_3_trend",
+		"next_step_1",
+		"next_step_2",
+		"next_step_3",
+		"closing_note",
+		"sender_name",
+		"sender_title",
+		"contact_information",
+		"attachments_list",
+		"detailed_report_link",
+	],
+	examples: [
+		"Weekly status update",
+		"Monthly executive briefing",
+		"Project milestone update",
+	],
+	best_practices: [
+		"Lead with key info",
+		"Use visuals",
+		"Be specific about needs",
+		"Maintain regular cadence",
+	],
+	example: "Project Update: Q3 Platform Migration...",
+});
+
+templateMap.set("okr_planning", {
+	name: "OKR Planning Framework",
+	domain: "strategy",
+	template: `# OKR Planning: {period} {year}
+
+**Organization/Team**: {team_name}
+**Mission**: {mission_statement}
+**Vision**: {vision_statement}
+
+## Strategic Context
+
+### Previous Period Review
+- Achievement Rate: {previous_achievement_rate}%
+- Key Learnings: {key_learnings}
+- Carry-over Items: {carryover_items}
+
+### Current Landscape
+- Market Conditions: {market_conditions}
+- Competitive Position: {competitive_position}
+- Internal Capabilities: {internal_capabilities}
+
+## Company/Team OKRs
+
+### Objective 1: {objective_1}
+*{objective_1_description}*
+
+**Why This Matters**: {objective_1_rationale}
+
+#### Key Results:
+1. **KR1**: {o1_kr1}
+- Baseline: {o1_kr1_baseline}
+- Target: {o1_kr1_target}
+- Owner: {o1_kr1_owner}
+
+2. **KR2**: {o1_kr2}
+- Baseline: {o1_kr2_baseline}
+- Target: {o1_kr2_target}
+- Owner: {o1_kr2_owner}
+
+3. **KR3**: {o1_kr3}
+- Baseline: {o1_kr3_baseline}
+- Target: {o1_kr3_target}
+- Owner: {o1_kr3_owner}
+
+#### Initiatives:
+- {o1_initiative_1}
+- {o1_initiative_2}
+- {o1_initiative_3}
+
+### Objective 2: {objective_2}
+*{objective_2_description}*
+
+**Why This Matters**: {objective_2_rationale}
+
+#### Key Results:
+1. **KR1**: {o2_kr1}
+- Baseline: {o2_kr1_baseline}
+- Target: {o2_kr1_target}
+- Owner: {o2_kr1_owner}
+
+2. **KR2**: {o2_kr2}
+- Baseline: {o2_kr2_baseline}
+- Target: {o2_kr2_target}
+- Owner: {o2_kr2_owner}
+
+3. **KR3**: {o2_kr3}
+- Baseline: {o2_kr3_baseline}
+- Target: {o2_kr3_target}
+- Owner: {o2_kr3_owner}
+
+#### Initiatives:
+- {o2_initiative_1}
+- {o2_initiative_2}
+- {o2_initiative_3}
+
+### Objective 3: {objective_3}
+*{objective_3_description}*
+
+**Why This Matters**: {objective_3_rationale}
+
+#### Key Results:
+1. **KR1**: {o3_kr1}
+- Baseline: {o3_kr1_baseline}
+- Target: {o3_kr1_target}
+- Owner: {o3_kr1_owner}
+
+2. **KR2**: {o3_kr2}
+- Baseline: {o3_kr2_baseline}
+- Target: {o3_kr2_target}
+- Owner: {o3_kr2_owner}
+
+3. **KR3**: {o3_kr3}
+- Baseline: {o3_kr3_baseline}
+- Target: {o3_kr3_target}
+- Owner: {o3_kr3_owner}
+
+#### Initiatives:
+- {o3_initiative_1}
+- {o3_initiative_2}
+- {o3_initiative_3}
+
+## Alignment & Dependencies
+
+### Cross-functional Dependencies
+- {dependency_1}: {dependency_1_details}
+- {dependency_2}: {dependency_2_details}
+
+### Resource Requirements
+- Headcount: {headcount_needs}
+- Budget: {budget_needs}
+- Tools/Systems: {tools_needs}
+
+## Risk Assessment
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| {risk_1} | {risk_1_prob} | {risk_1_impact} | {risk_1_mitigation} |
+| {risk_2} | {risk_2_prob} | {risk_2_impact} | {risk_2_mitigation} |
+
+## Success Metrics
+
+### Leading Indicators
+- {leading_indicator_1}
+- {leading_indicator_2}
+
+### Lagging Indicators
+- {lagging_indicator_1}
+- {lagging_indicator_2}
+
+## Review Cadence
+
+- **Weekly**: {weekly_review_format}
+- **Monthly**: {monthly_review_format}
+- **Quarterly**: {quarterly_review_format}
+
+## Communication Plan
+
+- **Updates**: {update_frequency} via {update_channel}
+- **Dashboards**: {dashboard_location}
+- **Stakeholders**: {stakeholder_list}`,
+	variables: [
+		"period",
+		"year",
+		"team_name",
+		"mission_statement",
+		"vision_statement",
+		"previous_achievement_rate",
+		"key_learnings",
+		"carryover_items",
+		"market_conditions",
+		"competitive_position",
+		"internal_capabilities",
+		"objective_1",
+		"objective_1_description",
+		"objective_1_rationale",
+		"o1_kr1",
+		"o1_kr1_baseline",
+		"o1_kr1_target",
+		"o1_kr1_owner",
+		"o1_kr2",
+		"o1_kr2_baseline",
+		"o1_kr2_target",
+		"o1_kr2_owner",
+		"o1_kr3",
+		"o1_kr3_baseline",
+		"o1_kr3_target",
+		"o1_kr3_owner",
+		"o1_initiative_1",
+		"o1_initiative_2",
+		"o1_initiative_3",
+		"objective_2",
+		"objective_2_description",
+		"objective_2_rationale",
+		"o2_kr1",
+		"o2_kr1_baseline",
+		"o2_kr1_target",
+		"o2_kr1_owner",
+		"o2_kr2",
+		"o2_kr2_baseline",
+		"o2_kr2_target",
+		"o2_kr2_owner",
+		"o2_kr3",
+		"o2_kr3_baseline",
+		"o2_kr3_target",
+		"o2_kr3_owner",
+		"o2_initiative_1",
+		"o2_initiative_2",
+		"o2_initiative_3",
+		"objective_3",
+		"objective_3_description",
+		"objective_3_rationale",
+		"o3_kr1",
+		"o3_kr1_baseline",
+		"o3_kr1_target",
+		"o3_kr1_owner",
+		"o3_kr2",
+		"o3_kr2_baseline",
+		"o3_kr2_target",
+		"o3_kr2_owner",
+		"o3_kr3",
+		"o3_kr3_baseline",
+		"o3_kr3_target",
+		"o3_kr3_owner",
+		"o3_initiative_1",
+		"o3_initiative_2",
+		"o3_initiative_3",
+		"dependency_1",
+		"dependency_1_details",
+		"dependency_2",
+		"dependency_2_details",
+		"headcount_needs",
+		"budget_needs",
+		"tools_needs",
+		"risk_1",
+		"risk_1_prob",
+		"risk_1_impact",
+		"risk_1_mitigation",
+		"risk_2",
+		"risk_2_prob",
+		"risk_2_impact",
+		"risk_2_mitigation",
+		"leading_indicator_1",
+		"leading_indicator_2",
+		"lagging_indicator_1",
+		"lagging_indicator_2",
+		"weekly_review_format",
+		"monthly_review_format",
+		"quarterly_review_format",
+		"update_frequency",
+		"update_channel",
+		"dashboard_location",
+		"stakeholder_list",
+	],
+	examples: [
+		"Quarterly OKRs",
+		"Annual company OKRs",
+		"Team OKRs",
+		"Product OKRs",
+	],
+	best_practices: [
+		"Limit to 3-5 objectives",
+		"Make KRs measurable",
+		"Ambitious but achievable",
+		"Regular reviews",
+	],
+	example: "OKR Planning: Q4 2024 Engineering Team...",
+});
+
+templateMap.set("standard_operating_procedure", {
+	name: "Standard Operating Procedure (SOP)",
+	domain: "operations",
+	template: `# Standard Operating Procedure: {procedure_name}
+
+**SOP ID**: {sop_id}
+**Version**: {version}
+**Effective Date**: {effective_date}
+**Review Date**: {review_date}
+**Owner**: {owner}
+**Approved By**: {approver}
+
+## 1. Purpose
+
+{purpose_statement}
+
+## 2. Scope
+
+### Applies To
+- {applies_to_1}
+- {applies_to_2}
+- {applies_to_3}
+
+### Does Not Apply To
+- {exception_1}
+- {exception_2}
+
+## 3. Definitions
+
+| Term | Definition |
+|------|------------|
+| {term_1} | {definition_1} |
+| {term_2} | {definition_2} |
+| {term_3} | {definition_3} |
+
+## 4. Responsibilities
+
+### {role_1}
+- {role_1_responsibility_1}
+- {role_1_responsibility_2}
+
+### {role_2}
+- {role_2_responsibility_1}
+- {role_2_responsibility_2}
+
+### {role_3}
+- {role_3_responsibility_1}
+- {role_3_responsibility_2}
+
+## 5. Prerequisites
+
+### Required Resources
+- {resource_1}
+- {resource_2}
+- {resource_3}
+
+### Required Access/Permissions
+- {permission_1}
+- {permission_2}
+
+### Required Training
+- {training_1}
+- {training_2}
+
+## 6. Procedure
+
+### Step 1: {step_1_title}
+**Responsible**: {step_1_responsible}
+**Duration**: {step_1_duration}
+
+1.1 {step_1_substep_1}
+- {step_1_detail_1}
+
+1.2 {step_1_substep_2}
+- {step_1_detail_2}
+
+**Checkpoint**: {step_1_checkpoint}
+
+### Step 2: {step_2_title}
+**Responsible**: {step_2_responsible}
+**Duration**: {step_2_duration}
+
+2.1 {step_2_substep_1}
+- {step_2_detail_1}
+
+2.2 {step_2_substep_2}
+- {step_2_detail_2}
+
+**Checkpoint**: {step_2_checkpoint}
+
+### Step 3: {step_3_title}
+**Responsible**: {step_3_responsible}
+**Duration**: {step_3_duration}
+
+3.1 {step_3_substep_1}
+- {step_3_detail_1}
+
+3.2 {step_3_substep_2}
+- {step_3_detail_2}
+
+**Checkpoint**: {step_3_checkpoint}
+
+## 7. Decision Points
+
+### Decision 1: {decision_1}
+- **If** {condition_1}: Go to Step {goto_1}
+- **If** {condition_2}: Go to Step {goto_2}
+
+## 8. Quality Checks
+
+| Check Point | Criteria | Action if Failed |
+|-------------|----------|------------------|
+| {check_1} | {criteria_1} | {action_1} |
+| {check_2} | {criteria_2} | {action_2} |
+
+## 9. Error Handling
+
+### Common Errors
+
+#### Error: {error_1}
+- **Symptoms**: {error_1_symptoms}
+- **Resolution**: {error_1_resolution}
+- **Prevention**: {error_1_prevention}
+
+#### Error: {error_2}
+- **Symptoms**: {error_2_symptoms}
+- **Resolution**: {error_2_resolution}
+- **Prevention**: {error_2_prevention}
+
+## 10. Documentation
+
+### Required Records
+- {record_1}: Stored in {location_1}
+- {record_2}: Stored in {location_2}
+
+### Retention Period
+- {retention_policy}
+
+## 11. Key Performance Indicators
+
+- {kpi_1}: Target = {kpi_1_target}
+- {kpi_2}: Target = {kpi_2_target}
+- {kpi_3}: Target = {kpi_3_target}
+
+## 12. References
+
+- {reference_1}
+- {reference_2}
+- {reference_3}
+
+## 13. Revision History
+
+| Version | Date | Changes | Author |
+|---------|------|---------|---------|
+| {version_1} | {date_1} | {changes_1} | {author_1} |
+| {version_2} | {date_2} | {changes_2} | {author_2} |
+
+## 14. Appendices
+
+### Appendix A: {appendix_a_title}
+{appendix_a_content}
+
+### Appendix B: Forms and Templates
+- {form_1}: {form_1_location}
+- {form_2}: {form_2_location}`,
+	variables: [
+		"procedure_name",
+		"sop_id",
+		"version",
+		"effective_date",
+		"review_date",
+		"owner",
+		"approver",
+		"purpose_statement",
+		"applies_to_1",
+		"applies_to_2",
+		"applies_to_3",
+		"exception_1",
+		"exception_2",
+		"term_1",
+		"definition_1",
+		"term_2",
+		"definition_2",
+		"term_3",
+		"definition_3",
+		"role_1",
+		"role_1_responsibility_1",
+		"role_1_responsibility_2",
+		"role_2",
+		"role_2_responsibility_1",
+		"role_2_responsibility_2",
+		"role_3",
+		"role_3_responsibility_1",
+		"role_3_responsibility_2",
+		"resource_1",
+		"resource_2",
+		"resource_3",
+		"permission_1",
+		"permission_2",
+		"training_1",
+		"training_2",
+		"step_1_title",
+		"step_1_responsible",
+		"step_1_duration",
+		"step_1_substep_1",
+		"step_1_detail_1",
+		"step_1_substep_2",
+		"step_1_detail_2",
+		"step_1_checkpoint",
+		"step_2_title",
+		"step_2_responsible",
+		"step_2_duration",
+		"step_2_substep_1",
+		"step_2_detail_1",
+		"step_2_substep_2",
+		"step_2_detail_2",
+		"step_2_checkpoint",
+		"step_3_title",
+		"step_3_responsible",
+		"step_3_duration",
+		"step_3_substep_1",
+		"step_3_detail_1",
+		"step_3_substep_2",
+		"step_3_detail_2",
+		"step_3_checkpoint",
+		"decision_1",
+		"condition_1",
+		"goto_1",
+		"condition_2",
+		"goto_2",
+		"check_1",
+		"criteria_1",
+		"action_1",
+		"check_2",
+		"criteria_2",
+		"action_2",
+		"error_1",
+		"error_1_symptoms",
+		"error_1_resolution",
+		"error_1_prevention",
+		"error_2",
+		"error_2_symptoms",
+		"error_2_resolution",
+		"error_2_prevention",
+		"record_1",
+		"location_1",
+		"record_2",
+		"location_2",
+		"retention_policy",
+		"kpi_1",
+		"kpi_1_target",
+		"kpi_2",
+		"kpi_2_target",
+		"kpi_3",
+		"kpi_3_target",
+		"reference_1",
+		"reference_2",
+		"reference_3",
+		"version_1",
+		"date_1",
+		"changes_1",
+		"author_1",
+		"version_2",
+		"date_2",
+		"changes_2",
+		"author_2",
+		"appendix_a_title",
+		"appendix_a_content",
+		"form_1",
+		"form_1_location",
+		"form_2",
+		"form_2_location",
+	],
+	examples: [
+		"Customer onboarding",
+		"Incident response",
+		"Release management",
+		"Data backup",
+	],
+	best_practices: [
+		"Be specific",
+		"Include visuals",
+		"Test procedures",
+		"Regular updates",
+	],
+	example: "SOP: Customer Support Ticket Escalation...",
+});
+
+export const getTemplate = (name: string) => {
+	return templateMap.get(name);
+};
+
+console.log(templateMap);
