@@ -4,16 +4,16 @@ Prompt Optimizer MCP Server
 An MCP server that provides tools for optimizing prompts for better AI responses
 """
 
-import json
 import asyncio
-from typing import Dict, List, Any, Optional
+import json
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any, Dict, List, Optional
 
 # MCP server imports (you'll need to install these)
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
-from mcp.types import Tool, TextContent
+from mcp.types import TextContent, Tool
 
 # Import advanced strategies and domain templates
 from advanced_strategies import AdvancedPromptOptimizer, AdvancedStrategy
