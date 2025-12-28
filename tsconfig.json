@@ -1,29 +1,28 @@
 {
-  "compilerOptions": {
-    // Environment setup & latest features
-    "lib": ["ESNext"],
-    "target": "ESNext",
-    "module": "Preserve",
-    "moduleDetection": "force",
-    "jsx": "react-jsx",
-    "allowJs": true,
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"display": "app base tsconfig",
+	"extends": "@tsconfig/bun",
+	"compilerOptions": {
+		"preserveSymlinks": true,
 
-    // Bundler mode
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
-    "noEmit": true,
+		"downlevelIteration": true,
+		"forceConsistentCasingInFileNames": true,
+		"allowJs": true,
 
-    // Best practices
-    "strict": true,
-    "skipLibCheck": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-
-    // Some stricter flags (disabled by default)
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false
-  }
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"strictNullChecks": true,
+		"exactOptionalPropertyTypes": false,
+		"plugins": [
+			{
+				"name": "@effect/language-service",
+				"diagnostics": true,
+				"quickinfo": true,
+				"completions": true,
+				"multipleEffectCheck": true
+			}
+		]
+	},
+	"exclude": ["node_modules"]
 }
