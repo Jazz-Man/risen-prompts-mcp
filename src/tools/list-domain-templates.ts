@@ -9,7 +9,17 @@ export const ListDomainTemplates = Tool.make("list_domain_templates", {
 			description: "Optional: filter by domain",
 		}),
 	},
-	success: Schema.Array(Schema.String),
+	success: Schema.Array(
+		Schema.Struct({
+			name: Schema.String,
+			domain: Schema.String,
+			template: Schema.String,
+			variables: Schema.Array(Schema.String),
+			example: Schema.String,
+			best_practices: Schema.optional(Schema.Array(Schema.String)),
+			examples: Schema.optional(Schema.Array(Schema.String)),
+		}),
+	),
 });
 
 export const ListDomainTemplatesHandler: ToolHandler<
@@ -17,6 +27,26 @@ export const ListDomainTemplatesHandler: ToolHandler<
 > = ({ domain }) =>
 	Effect.succeed(
 		domain
-			? [`${domain}-template1`, `${domain}-template2`, `${domain}-template3`]
-			: ["template1", "template2", "template3"],
+			? [
+					{
+						name: `${domain}-template1`,
+						domain,
+						template: `${domain}-template1`,
+						variables: [],
+						example: `${domain}-template1`,
+						best_practices: [],
+						examples: [],
+					},
+				]
+			: [
+					{
+						name: "template1",
+						domain: "general",
+						template: "template1",
+						variables: [],
+						example: "template1",
+						best_practices: [],
+						examples: [],
+					},
+				],
 	);
