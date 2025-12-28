@@ -8,5 +8,9 @@
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "dependencies": {
+    "@effect/ai": "0.33.0",
+    "@effect/platform-bun": "0.87.0"
   }
 }
