@@ -1,23 +1,22 @@
 import { Schema } from "effect";
+
 import code_review_checklist from "./files/code_review_checklist.md" with {
 	type: "text",
 };
 import competitor_analysis from "./files/competitor_analysis.md" with {
 	type: "text",
 };
+import okr_planning from "./files/okr_planning.md" with { type: "text" };
+import stakeholder_update from "./files/stakeholder_update.md" with {
+	type: "text",
+};
+import standard_operating_procedure from "./files/standard_operating_procedure.md" with {
+	type: "text",
+};
 import technical_blog_post from "./files/technical_blog_post.md" with {
 	type: "text",
 };
 import user_research_synthesis from "./files/user_research_synthesis.md" with {
-	type: "text",
-};
-import stakeholder_update from "./files/stakeholder_update.md" with {
-	type: "text",
-};
-import okr_planning from "./files/okr_planning.md" with {
-	type: "text",
-};
-import standard_operating_procedure from "./files/standard_operating_procedure.md" with {
 	type: "text",
 };
 
@@ -646,5 +645,3 @@ templateMap.set("standard_operating_procedure", {
 export const getTemplate = (name: string) => {
 	return templateMap.get(name);
 };
-
-console.log(templateMap);
