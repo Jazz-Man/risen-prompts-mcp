@@ -13,7 +13,7 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "@effect/ai": "0.33.0",
+    "@effect/ai": "0.33.2",
     "@effect/platform-bun": "0.87.0",
     "effect": "3.19.13"
   }
