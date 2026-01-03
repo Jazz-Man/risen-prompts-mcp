@@ -423,6 +423,76 @@ declare const registerToolkit: <Tools extends Record<string, AiTool.Any>>(
 >
 ```
 
+### Provider-Defined Tools
+
+The Tool module now supports provider-defined tools, which are tools built into LLM providers (like web search, code execution) rather than user-defined tools. These tools are executed by the LLM provider rather than your application, but can optionally require custom handlers implemented in your application to process provider-generated results.
+
+**Example Usage:**
+```ts
+import { Tool } from "@effect/ai"
+import { Schema } from "effect"
+
+// Define a web search tool provided by OpenAI
+const WebSearch = Tool.providerDefined({
+  id: "openai.web_search",
+  toolkitName: "WebSearch",
+  providerName: "web_search",
+  args: {
+    query: Schema.String
+  },
+  success: Schema.Struct({
+    results: Schema.Array(Schema.Struct({
+      title: Schema.String,
+      url: Schema.String,
+      snippet: Schema.String
+    }))
+  })
+})
+```
+
+### Enhanced Tool Annotations
+
+Tools now support enhanced annotations for better metadata management:
+
+- **Title**: Human-readable title for tools
+- **Readonly**: Indicates whether a tool only reads data without making changes
+- **Destructive**: Indicates whether a tool performs destructive operations
+- **Idempotent**: Indicates whether a tool can be called multiple times safely
+- **OpenWorld**: Indicates whether a tool can handle arbitrary external data
+
+**Example Usage:**
+```ts
+import { Tool } from "@effect/ai"
+
+const readOnlyTool = Tool.make("get_user_info")
+  .annotate(Tool.Readonly, true)
+
+const safeTool = Tool.make("search_database")
+  .annotate(Tool.Destructive, false)
+
+const idempotentTool = Tool.make("get_current_time")
+  .annotate(Tool.Idempotent, true)
+```
+
+### Tool Failure Modes
+
+Tools now support configurable failure modes:
+
+- **"error"** (default): Errors during tool execution are returned in the error channel
+- **"return"**: Errors during tool execution are captured and returned as part of the tool call result
+
+**Example Usage:**
+```ts
+const safeTool = Tool.make("risky_operation", {
+  failureMode: "return", // Errors will be returned as part of the result
+  success: Schema.Struct({
+    success: Schema.Boolean,
+    data: Schema.Option(Schema.String),
+    error: Schema.Option(Schema.String)
+  })
+})
+```
+
 ## Elicitation
 
 ### McpServer.elicit
@@ -435,6 +505,54 @@ declare const elicit: <A, I extends Record<string, any>, R>(options: {
   readonly schema: Schema.Schema<A, I, R>
 }) => Effect.Effect<A, ElicitationDeclined, McpServerClient | R>
 ```
+
+The elicit function now has enhanced error handling and properly manages different user responses:
+
+- **Accept**: User accepted the request and provided content matching the requested schema
+- **Cancel**: User canceled the request without providing content
+- **Decline**: User explicitly declined the request
+
+**Example Usage:**
+```ts
+import { McpServer, McpSchema } from "@effect/ai"
+import { Effect, Schema } from "effect"
+
+// Define a schema for the data you want to elicit
+const UserDataSchema = Schema.Struct({
+  name: Schema.String,
+  email: Schema.String,
+  age: Schema.Number
+})
+
+// Use elicit to request information from the client
+const getUserData = Effect.gen(function*() {
+  const userData = yield* McpServer.elicit({
+    message: "Please provide your user information",
+    schema: UserDataSchema
+  })
+  
+  return userData
+})
+```
+
+### ElicitationDeclined
+
+Error type for when elicitation is declined, with detailed information about the request and potential cause:
+
+```ts
+declare class ElicitationDeclined
+```
+
+## Protocol Version Updates
+
+The MCP protocol has been updated to version "2025-06-18" with support for multiple protocol versions:
+
+- "2025-06-18" (latest)
+- "2025-03-26"
+- "2024-11-05"
+- "2024-10-07"
+
+This ensures backward compatibility while supporting the latest features.
 
 ## Schema Utilities
 
@@ -573,6 +691,46 @@ const MyPrompt = McpServer.prompt({
 })
 ```
 
+## Additional Capabilities
+
+### Roots Support
+
+The MCP protocol now supports roots, which allow servers to request specific directories or files from clients to operate on. This is particularly useful for file system operations and repository access.
+
+**Root Capabilities:**
+- Clients can support listing roots with the `roots` capability
+- Support for notifications when the roots list changes
+- Servers can request root URIs from clients using the `roots/list` RPC
+
+### Sampling Support
+
+The protocol now supports sampling capabilities, allowing servers to request LLM sampling from clients. This enables more sophisticated AI interactions where the server can request the client to perform additional AI processing.
+
+**Sampling Capabilities:**
+- Clients can support sampling with the `sampling` capability
+- Support for model selection hints and preferences
+- Configurable parameters like temperature, max tokens, and stop sequences
+
+### Enhanced Client Capabilities
+
+The protocol now includes more comprehensive client capabilities:
+
+```ts
+export class ClientCapabilities extends Schema.Class<ClientCapabilities>(
+  "@effect/ai/McpSchema/ClientCapabilities"
+)({
+  experimental: Schema.optional(Schema.Record({
+    key: Schema.String,
+    value: Schema.Struct({})
+  })),
+  roots: Schema.optional(Schema.Struct({
+    listChanged: Schema.optional(Schema.Boolean)
+  })),
+  sampling: Schema.optional(Schema.Struct({})),
+  elicitation: Schema.optional(Schema.Struct({}))
+})
+```
+
 ## Architecture Benefits
 
 1. **Type Safety**: Leverages Effect's Schema system for compile-time type safety
@@ -580,5 +738,8 @@ const MyPrompt = McpServer.prompt({
 3. **Transport Agnostic**: Supports both stdio and HTTP transports
 4. **Auto-completion**: Built-in support for parameter auto-completion
 5. **Standard Protocol**: Implements the open Model Context Protocol standard
+6. **Enhanced Interactivity**: Supports elicitation for interactive user input
+7. **Provider Integration**: Supports provider-defined tools for advanced capabilities
+8. **Flexible Architecture**: Supports roots and sampling for comprehensive AI workflows
 
 This comprehensive MCP server implementation allows you to build sophisticated AI applications that can interact with external tools and resources in a standardized, type-safe manner using the Effect ecosystem.
